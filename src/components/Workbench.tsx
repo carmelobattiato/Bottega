@@ -138,6 +138,7 @@ export const Workbench: React.FC<WorkbenchProps> = ({
   const [showMasterHintModal, setShowMasterHintModal] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
   const [orientation, setOrientation] = useState<PhoneViewOrientation>('front');
+  const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
 
   // Sync mode if passed from parent
   useEffect(() => {
@@ -2906,7 +2907,7 @@ export const Workbench: React.FC<WorkbenchProps> = ({
       {/* MAIN WORKBENCH LAYOUT */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         {/* LEFT TOOLBAR: SCHEDA CLIENTE INTEGRATA & ATTREZZI DA LAVORO */}
-        <div className="w-full md:w-64 bg-white/95 border-r border-slate-200 p-3.5 flex flex-col justify-between z-10 overflow-y-auto shadow-xs">
+        <div className="hidden md:flex w-64 bg-white/95 border-r border-slate-200 p-3.5 flex-col justify-between z-10 overflow-y-auto shadow-xs">
           <div>
             {/* 3) INTEGRATED COLLAPSIBLE CUSTOMER SHEET (Point 3) */}
             <div className="mb-3 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white border border-slate-700 shadow-md overflow-hidden transition-all">
@@ -3032,6 +3033,74 @@ export const Workbench: React.FC<WorkbenchProps> = ({
             </div>
           </div>
         </div>
+
+        {/* MOBILE FLOATING TOOLS BUTTON */}
+        <div className="md:hidden absolute bottom-20 right-4 z-40">
+          <button
+            onClick={() => setIsMobileToolsOpen(true)}
+            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black text-xs shadow-2xl border-2 border-cyan-300 cursor-pointer animate-bounce"
+          >
+            <Wrench className="w-4 h-4" />
+            <span>🔧 Attrezzi ({selectedTool === 'none' ? 'Mani' : 'Attivo'})</span>
+          </button>
+        </div>
+
+        {/* MOBILE TOOLS SLIDE-OVER DRAWER */}
+        {isMobileToolsOpen && (
+          <div className="md:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex flex-col justify-end animate-fade-in">
+            <div className="bg-white rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+                <h3 className="text-sm font-black text-slate-900 font-['Outfit'] flex items-center gap-2">
+                  <Wrench className="w-4 h-4 text-cyan-600" /> Scegli Attrezzo da Lavoro
+                </h3>
+                <button
+                  onClick={() => setIsMobileToolsOpen(false)}
+                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-2 mb-4">
+                {tools.map(t => {
+                  const Icon = t.icon;
+                  const isSelected = selectedTool === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => {
+                        setSelectedTool(isSelected ? 'none' : t.id);
+                        setFeedbackMsg(`Selezionato: ${t.name}. ${t.desc}`);
+                        soundManager.playCustomerChirp(1.2);
+                        setIsMobileToolsOpen(false);
+                      }}
+                      className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                        isSelected
+                          ? 'bg-cyan-50 border-cyan-500 text-cyan-900'
+                          : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isSelected ? 'bg-cyan-600 text-white font-bold' : 'bg-slate-200 text-slate-700'}`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold">{t.name}</div>
+                          <div className="text-[10px] text-slate-500">{t.desc}</div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => setIsMobileToolsOpen(false)}
+                className="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl cursor-pointer"
+              >
+                Chiudi e Torna al Banco 3D
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* CENTER: 3D WORKBENCH SCENE */}
         <div className="flex-1 flex flex-col relative overflow-hidden bg-slate-200">

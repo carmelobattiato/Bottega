@@ -1291,7 +1291,7 @@ export const ThreeWorkbenchScene: React.FC<ThreeWorkbenchSceneProps> = ({
 
   useEffect(() => {
     if (cameraRef.current) {
-      let baseCam = new THREE.Vector3(0, 3.4, 2.9);
+      let baseCam = new THREE.Vector3(0, 3.2, 2.6);
       if (orientation === 'side_bottom') {
         // Point 3: Vista bordo USB inclinato a 60 gradi verso la telecamera
         baseCam.set(0, 1.45, 3.3);
