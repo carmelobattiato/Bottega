@@ -1,0 +1,6 @@
+{
+  "name": "Bottega Ripara-Telefoni",
+  "description": "Simulatore di negozio e banco riparazione smartphone con clienti dai corpi geometrici, banco da lavoro interattivo, strumenti di smontaggio e tutorial guidato.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
